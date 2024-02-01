@@ -55,7 +55,7 @@ rule basecalling:
         #TODO generalize to cpu or gpu
         basecaller_location = basecaller_location,
     output:
-        'outputs/basecalling/{library_name}/guppy/sequencing_summary.txt'
+        '{library_name}/basecalling/guppy/sequencing_summary.txt'
     params:
         kit = lambda wildcards: get_exp_info(wildcards.library_name)['kit'],
         flowcell = lambda wildcards: get_exp_info(wildcards.library_name)['flowcell'],
@@ -65,6 +65,7 @@ rule basecalling:
     shell:
         """
         {input.basecaller_location} \
+            --quiet \
             --flowcell {params.flowcell} \
             --kit {params.kit} \
             --records_per_fastq 0 \
@@ -81,25 +82,25 @@ rule basecalling:
 
 rule merge_fastq_files:
     input:
-        'outputs/basecalling/{library_name}/guppy/sequencing_summary.txt'
+        '{library_name}/basecalling/guppy/sequencing_summary.txt'
     output:
-        "outputs/basecalling/{library_name}/guppy/reads.fastq"
+        "{library_name}/basecalling/guppy/reads.fastq"
     conda:
         "../envs/merge_fastq.yaml"
     shell:
         """
-        if [ -d outputs/basecalling/{wildcards.library_name}/guppy/pass ]; then cat outputs/basecalling/{wildcards.library_name}/guppy/pass/fastq_runid*.fastq > {output}; \
-        else cat outputs/basecalling/{wildcards.library_name}/guppy/fastq_runid*.fastq > {output}; fi
+        if [ -d {wildcards.library_name}/basecalling/guppy/pass ]; then cat {wildcards.library_name}/basecalling/guppy/pass/fastq_runid*.fastq > {output}; \
+        else cat {wildcards.library_name}/basecalling/guppy/fastq_runid*.fastq > {output}; fi
         """
 
 rule align_to_genome:
     input:
-        reads="outputs/basecalling/{library_name}/guppy/reads.fastq"
+        reads="{library_name}/basecalling/guppy/reads.fastq"
     params: 
         reference_path = reference_path
     output:
-        bam = 'outputs/alignment/{library_name}/minimap2/reads-align.genome.sorted.bam',
-        bai = 'outputs/alignment/{library_name}/minimap2/reads-align.genome.sorted.bam.bai',
+        bam = '{library_name}/alignment/minimap2/reads-align.genome.sorted.bam',
+        bai = '{library_name}/alignment/minimap2/reads-align.genome.sorted.bam.bai',
     conda:
         "../envs/alignment.yaml"
     threads: 32
@@ -122,13 +123,13 @@ rule align_to_genome:
 
 rule SV_calling:
     input: 
-        bam = 'outputs/alignment/{library_name}/minimap2/reads-align.genome.sorted.bam'
+        bam = '{library_name}/alignment/minimap2/reads-align.genome.sorted.bam'
     output:
-        vcf = 'outputs/sv_calling/{library_name}/variants.vcf'
+        vcf = '{library_name}/sv_calling/variants.vcf'
     params: reference_path = reference_path,
     conda: 
         "../envs/svim_environment.yaml"
     shell:
         """
-        svim alignment outputs/sv_calling/{wildcards.library_name} {input.bam} {params.reference_path} 
+        svim alignment {wildcards.library_name}/sv_calling/ {input.bam} {params.reference_path} 
         """

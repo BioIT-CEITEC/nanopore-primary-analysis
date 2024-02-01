@@ -6,7 +6,7 @@
       "type":"run_demultiplexing",
       "inputs":"{run_dir}/*",
       "outputs":[
-        "raw_fastq/{sample}*fastq*"
+        "{library}/SV_calling/variants.vcf"
       ],
       "run_parameters": {
         "cpu": 30,
