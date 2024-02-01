@@ -8,7 +8,8 @@ import os
 #TODO add option to download cpu vs gpu version of guppy,
 
 def get_exp_info(library_name):
-    pattern = os.path.join(library_name, 'report_*.json')
+    run_dir_path = config["run_dir"]
+    pattern = os.path.join(run_dir_path, 'report_*.json')
     files = glob.glob(pattern)
     assert len(files) == 1, 'Number of configs found != 1'
 
@@ -28,7 +29,7 @@ def get_exp_info(library_name):
         'experiment_name':experiment_name,
         'library_name':library_name,
         'kit':kit,
-        'save_path':'outputs/basecalling/'+library_name+'/guppy/',
+        'save_path':'{library_name}/basecalling/guppy/',
     }
 
 # TODO extrahovat do params 
@@ -51,7 +52,7 @@ rule extract_basecaller:
 rule basecalling:
     input: 
         #TODO take only pass?
-        library_path = config["run_dir"] + "/fast5_pass",
+        fast5_path = config["run_dir"] + "/fast5_pass",
         #TODO generalize to cpu or gpu
         basecaller_location = basecaller_location,
     output:
@@ -75,7 +76,7 @@ rule basecalling:
             --num_callers {threads} \
             --chunks_per_runner 512 \
             --calib_detect \
-            --input_path {input.library_path} \
+            --input_path {input.fast5_path} \
             -q 0 \
             2>&1; \
         """
