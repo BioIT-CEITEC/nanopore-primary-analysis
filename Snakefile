@@ -14,6 +14,7 @@ include: "rules/rules.smk"
 
 rule all:
     input:
+        #expand("{folder}/conversion_ok.txt", folder = config["run_dir"])
         expand("{library_name}/sv_calling/variants.vcf", library_name = library)
         #expand("outputs/alignment/{library_name}/minimap2/reads-align.genome.sorted.bam", library_name = config["run_dir"])
         #expand("outputs/basecalling/{library_name}/guppy/sequencing_summary.txt", library_name = config["run_dir"])

@@ -29,15 +29,35 @@ def get_exp_info(library_name):
         'experiment_name':experiment_name,
         'library_name':library_name,
         'kit':kit,
-        'save_path':'{library_name}/basecalling/guppy/',
+        'save_path':f'{library_name}/basecalling/guppy/',
     }
 
-# TODO extrahovat do params 
-rule download_basecaller_tar:
-    output: '/tmp/ont-guppy-cpu_6.4.6_linux64.tar.gz'
+rule convert_fast5_to_pod5:
+    input: fast5_path = config["run_dir"] + "/fast5_pass"
+    output: 
+        pod5_folder = config["run_dir"] + "/output_pass.pod5",
+        is_ok =  config["run_dir"] + "/conversion_ok.txt"
+    conda:
+        "../envs/conversion.yaml"
+    shell:
+        """
+        pod5 convert fast5 {input.fast5_path} --output {output.pod5_folder}
+        echo "OK" > {output.is_ok}
+        """
+
+rule download_dorado_tar:
+    output: '/tmp/dorado-0.5.3-linux-x64.tar.gz'
     shell:
         f"""
-        wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/ont-guppy-cpu_6.4.6_linux64.tar.gz
+        wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.5.3-linux-x64.tar.gz
+        """
+rule extract_dorado:
+    input:'/tmp/dorado-0.5.3-linux-x64.tar.gz'
+    output: basecaller_location
+    shell:
+        """
+        cd /tmp ;
+        tar -xf {input}
         """
         
 rule extract_basecaller:
