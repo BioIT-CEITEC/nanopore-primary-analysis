@@ -45,20 +45,28 @@ rule convert_fast5_to_pod5:
         echo "OK" > {output.is_ok}
         """
 
-rule download_dorado_tar:
-    output: '/tmp/dorado-0.5.3-linux-x64.tar.gz'
+# TODO extrahovat do params 
+rule download_basecaller_tar:
+    output: '/tmp/ont-guppy-cpu_6.4.6_linux64.tar.gz'
     shell:
         f"""
-        wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.5.3-linux-x64.tar.gz
+        wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/ont-guppy-cpu_6.4.6_linux64.tar.gz
         """
-rule extract_dorado:
-    input:'/tmp/dorado-0.5.3-linux-x64.tar.gz'
-    output: basecaller_location
-    shell:
-        """
-        cd /tmp ;
-        tar -xf {input}
-        """
+
+# rule download_dorado_tar:
+#     output: '/tmp/dorado-0.5.3-linux-x64.tar.gz'
+#     shell:
+#         f"""
+#         wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.5.3-linux-x64.tar.gz
+#         """
+# rule extract_dorado:
+#     input:'/tmp/dorado-0.5.3-linux-x64.tar.gz'
+#     output: basecaller_location
+#     shell:
+#         """
+#         cd /tmp ;
+#         tar -xf {input}
+#         """
         
 rule extract_basecaller:
     input:'/tmp/ont-guppy-cpu_6.4.6_linux64.tar.gz'
