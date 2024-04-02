@@ -5,7 +5,7 @@
       "label":"Basecalling, methylation, alignment",
       "type":"primary_analysis",
       "inputs":[
-        "nanopore_run_report.json,
+        "nanopore_run_report.json",
         "raw_*5_files"
       ],
       "outputs":[
