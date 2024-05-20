@@ -7,9 +7,8 @@ import os
 #TODO add option to copy fastq files from online basecalling,
 #TODO add option to download cpu vs gpu version of guppy,
 
-def get_exp_info(library_name):
-    run_dir_path = config["run_dir"]
-    pattern = os.path.join(run_dir_path, 'report_*.json')
+def get_exp_info(library_name, sample_name):
+    pattern = os.path.join(library_name, sample_name, "*",'report_*.json')
     files = glob.glob(pattern)
     assert len(files) == 1, 'Number of configs found != 1'
 
@@ -29,7 +28,6 @@ def get_exp_info(library_name):
         'experiment_name':experiment_name,
         'library_name':library_name,
         'kit':kit,
-        'save_path':f'{library_name}/basecalling/guppy/',
     }
 
 rule convert_fast5_to_pod5:
@@ -44,6 +42,11 @@ rule convert_fast5_to_pod5:
         pod5 convert fast5 {input.fast5_path} --output {output.pod5_folder}
         echo "OK" > {output.is_ok}
         """
+rule merge_samples_pass_files:
+    input: "{library_name}/{sample_name}/{run_name}/pod5_pass/*.pod5"
+    output: "outputs/{library_name}/{sample_name}/reads_merged.pod5"
+    conda: "pod5_merge.yaml"
+    shell: "pod5 merge {input} --output {output}"
 
 # TODO extrahovat do params 
 rule download_basecaller_tar:
@@ -80,6 +83,8 @@ rule extract_basecaller:
 rule basecalling:
     input: 
         #TODO take only pass?
+        #library_path = 'data/{library_name}/fast5_pass',
+
         fast5_path = config["run_dir"] + "/fast5_pass",
         #TODO generalize to cpu or gpu
         basecaller_location = basecaller_location,
