@@ -10,7 +10,7 @@ import os
 def get_exp_info(library_name, sample_name):
     pattern = os.path.join(library_name, sample_name, "*",'report_*.json')
     files = glob.glob(pattern)
-    assert len(files) == 1, 'Number of configs found != 1'
+    #assert len(files) == 1, 'Number of configs found != 1'
 
     f = open(files[0])
     run_config = json.load(f)
@@ -30,66 +30,101 @@ def get_exp_info(library_name, sample_name):
         'kit':kit,
     }
 
-rule convert_fast5_to_pod5:
-    input: fast5_path = config["run_dir"] + "/fast5_pass"
-    output: 
-        pod5_folder = config["run_dir"] + "/output_pass.pod5",
-        is_ok =  config["run_dir"] + "/conversion_ok.txt"
-    conda:
-        "../envs/conversion.yaml"
-    shell:
-        """
-        pod5 convert fast5 {input.fast5_path} --output {output.pod5_folder}
-        echo "OK" > {output.is_ok}
-        """
+# rule convert_fast5_to_pod5:
+#     input: fast5_path = config["run_dir"] + "/fast5_pass"
+#     output: 
+#         pod5_folder = config["run_dir"] + "/output_pass.pod5",
+#         is_ok =  config["run_dir"] + "/conversion_ok.txt"
+#     conda:
+#         "../envs/conversion.yaml"
+#     shell:
+#         """
+#         pod5 convert fast5 {input.fast5_path} --output {output.pod5_folder}
+#         echo "OK" > {output.is_ok}
+#         """
+
 rule merge_samples_pass_files:
-    input: "{library_name}/{sample_name}/{run_name}/pod5_pass/*.pod5"
+    input: f"{library_name}/{sample_name}/*/pod5_pass/*.pod5"
     output: "outputs/{library_name}/{sample_name}/reads_merged.pod5"
     conda: "pod5_merge.yaml"
     shell: "pod5 merge {input} --output {output}"
 
-# TODO extrahovat do params 
-rule download_basecaller_tar:
-    output: '/tmp/ont-guppy-cpu_6.4.6_linux64.tar.gz'
-    shell:
-        f"""
-        wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/ont-guppy-cpu_6.4.6_linux64.tar.gz
-        """
+# pod5 merge Szilvia_FH_transposons/L0728/*/pod5_pass/*.pod5 --output Szilvia_FH_transposons/L0728/reads_merged.pod5
 
-# rule download_dorado_tar:
-#     output: '/tmp/dorado-0.5.3-linux-x64.tar.gz'
+# # TODO extrahovat do params 
+# rule download_basecaller_tar:
+#     output: '/tmp/ont-guppy-cpu_6.4.6_linux64.tar.gz'
 #     shell:
 #         f"""
-#         wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.5.3-linux-x64.tar.gz
+#         wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/ont-guppy-cpu_6.4.6_linux64.tar.gz
 #         """
-# rule extract_dorado:
-#     input:'/tmp/dorado-0.5.3-linux-x64.tar.gz'
+# rule extract_basecaller:
+#     input:'/tmp/ont-guppy-cpu_6.4.6_linux64.tar.gz'
 #     output: basecaller_location
 #     shell:
 #         """
 #         cd /tmp ;
 #         tar -xf {input}
 #         """
-        
-rule extract_basecaller:
-    input:'/tmp/ont-guppy-cpu_6.4.6_linux64.tar.gz'
+
+rule download_dorado_tar:
+    output: '/tmp/dorado-0.5.3-linux-x64.tar.gz'
+    shell:
+        f"""
+        wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.5.3-linux-x64.tar.gz
+        """
+rule extract_dorado:
+    input:'dorado-0.5.3-linux-x64.tar.gz'
     output: basecaller_location
     shell:
-        """
-        cd /tmp ;
+        f"""
+        cd {GLOBAL_TMPD_PATH} ;
         tar -xf {input}
         """
+        
 
-rule basecalling:
+# rule basecalling:
+#     input: 
+#         #TODO take only pass?
+#         #library_path = 'data/{library_name}/fast5_pass',
+
+#         fast5_path = config["run_dir"] + "/fast5_pass",
+#         #TODO generalize to cpu or gpu
+#         basecaller_location = basecaller_location,
+#     output:
+#         'outputs/{wildcards.library_name}/{wildcards.sample_name}/basecalling/sequencing_summary.txt'
+#     params:
+#         kit = lambda wildcards: get_exp_info(wildcards.library_name)['kit'],
+#         flowcell = lambda wildcards: get_exp_info(wildcards.library_name)['flowcell'],
+#         save_path = lambda wildcards: f"outputs/{wildcards.library_name}/{wildcards.sample_name}/basecalling/",
+#     threads: workflow.cores * 0.75
+#     resources: gpus=1
+#     shell:
+#         """
+#         {input.basecaller_location} \
+#             --quiet \
+#             --flowcell {params.flowcell} \
+#             --kit {params.kit} \
+#             --records_per_fastq 0 \
+#             --trim_strategy none \
+#             --save_path {params.save_path} \
+#             --recursive \
+#             --num_callers {threads} \
+#             --chunks_per_runner 512 \
+#             --calib_detect \
+#             --input_path {input.fast5_path} \
+#             -q 0 \
+#             2>&1; \
+#         """
+
+rule basecalling_dorado:
     input: 
         #TODO take only pass?
-        #library_path = 'data/{library_name}/fast5_pass',
-
-        fast5_path = config["run_dir"] + "/fast5_pass",
+        pod5_path = "outputs/{library_name}/{sample_name}/reads_merged.pod5",
         #TODO generalize to cpu or gpu
         basecaller_location = basecaller_location,
     output:
-        '{library_name}/basecalling/guppy/sequencing_summary.txt'
+        'outputs/{wildcards.library_name}/{wildcards.sample_name}/basecalling/reads_merged.bam'
     params:
         kit = lambda wildcards: get_exp_info(wildcards.library_name)['kit'],
         flowcell = lambda wildcards: get_exp_info(wildcards.library_name)['flowcell'],
@@ -98,38 +133,25 @@ rule basecalling:
     resources: gpus=1
     shell:
         """
-        {input.basecaller_location} \
-            --quiet \
-            --flowcell {params.flowcell} \
-            --kit {params.kit} \
-            --records_per_fastq 0 \
-            --trim_strategy none \
-            --save_path {params.save_path} \
-            --recursive \
-            --num_callers {threads} \
-            --chunks_per_runner 512 \
-            --calib_detect \
-            --input_path {input.fast5_path} \
-            -q 0 \
-            2>&1; \
+        {input.basecaller_location} basecaller hac {input.pod5_path} > {output}
         """
 
-rule merge_fastq_files:
-    input:
-        '{library_name}/basecalling/guppy/sequencing_summary.txt'
-    output:
-        "{library_name}/basecalling/guppy/reads.fastq"
-    conda:
-        "../envs/merge_fastq.yaml"
-    shell:
-        """
-        if [ -d {wildcards.library_name}/basecalling/guppy/pass ]; then cat {wildcards.library_name}/basecalling/guppy/pass/fastq_runid*.fastq > {output}; \
-        else cat {wildcards.library_name}/basecalling/guppy/fastq_runid*.fastq > {output}; fi
-        """
+# rule merge_fastq_files:
+#     input:
+#         '{library_name}/basecalling/guppy/sequencing_summary.txt'
+#     output:
+#         "{library_name}/basecalling/guppy/reads.fastq"
+#     conda:
+#         "../envs/merge_fastq.yaml"
+#     shell:
+#         """
+#         if [ -d {wildcards.library_name}/basecalling/guppy/pass ]; then cat {wildcards.library_name}/basecalling/guppy/pass/fastq_runid*.fastq > {output}; \
+#         else cat {wildcards.library_name}/basecalling/guppy/fastq_runid*.fastq > {output}; fi
+#         """
 
 rule align_to_genome:
     input:
-        reads="{library_name}/basecalling/guppy/reads.fastq"
+        reads='outputs/{wildcards.library_name}/{wildcards.sample_name}/basecalling/reads_merged.bam'
     params: 
         reference_path = reference_path
     output:
@@ -155,15 +177,8 @@ rule align_to_genome:
 		samtools index {output.bam}
 		"""
 
-rule SV_calling:
-    input: 
-        bam = '{library_name}/alignment/minimap2/reads-align.genome.sorted.bam'
-    output:
-        vcf = '{library_name}/sv_calling/variants.vcf'
-    params: reference_path = reference_path,
-    conda: 
-        "../envs/svim_environment.yaml"
-    shell:
-        """
-        svim alignment {wildcards.library_name}/sv_calling/ {input.bam} {params.reference_path} 
-        """
+# rule alignment_multiqc:
+#     input: bam = 'outputs/{wildcards.library_name}/{wildcards.sample_name}/basecalling/reads_merged.bam',
+#     output: html= "outputs/qc_reports/alignment_multiqc/multiqc.html"
+#     conda:
+#         "../envs/alignment_multiqc.yaml"

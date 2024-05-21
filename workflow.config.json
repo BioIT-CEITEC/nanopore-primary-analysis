@@ -2,7 +2,7 @@
     "workflow_description": {
       "name":"nanopore_primary_analysis",
       "version": 1.0,
-      "label":"Basecalling, methylation, alignment",
+      "label":"Basecalling, alignment",
       "type":"primary_analysis",
       "inputs":[
         "nanopore_run_report.json",
@@ -25,13 +25,7 @@
     "sample_name"
     ],
     "gui_params" : {
-      "primary": {
-        "lib_ROI": {
-          "label": "Regions of interest",
-          "type": "enum",
-          "default": "wgs",
-          "list": ##INCLUDE:reference_info/lib_ROI.json##
-        },  
+      "primary": { 
         "reference": {
           "label": "Genomic Reference",
           "type": "enum",

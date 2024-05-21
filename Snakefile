@@ -8,8 +8,8 @@ ref_type = list(config["libraries"].values())[0]["reference"]
 library = list(config["libraries"].keys())[0]
 #TODO how to get organism
 reference_path = os.path.join(GLOBAL_REF_PATH, "homo_sapiens", ref_type, "seq", ref_type + ".fa")
-basecaller_location = os.path.join(GLOBAL_TMPD_PATH, "ont-guppy-cpu/bin/guppy_basecaller")
-
+#basecaller_location = os.path.join(GLOBAL_TMPD_PATH, "ont-guppy-cpu/bin/guppy_basecaller")
+basecaller_location = os.path.join(GLOBAL_TMPD_PATH, "/tmp/dorado-0.5.3-linux-x64/bin/dorado")
 
 library_name = list(config["libraries"].keys())[0]
 sample_names = []
