@@ -45,7 +45,7 @@ def get_exp_info(library_name, sample_name):
 
 rule merge_samples_pass_files:
     input: f"{library_name}/{sample_name}/*/pod5_pass/*.pod5"
-    output: "outputs/{library_name}/{sample_name}/reads_merged.pod5"
+    output: "{library_name}/outputs/{sample_name}/reads_merged.pod5"
     conda: "pod5_merge.yaml"
     shell: "pod5 merge {input} --output {output}"
 
@@ -120,11 +120,11 @@ rule extract_dorado:
 rule basecalling_dorado:
     input: 
         #TODO take only pass?
-        pod5_path = "outputs/{library_name}/{sample_name}/reads_merged.pod5",
+        pod5_path = "{library_name}/outputs/{sample_name}/reads_merged.pod5",
         #TODO generalize to cpu or gpu
         basecaller_location = basecaller_location,
     output:
-        'outputs/{wildcards.library_name}/{wildcards.sample_name}/basecalling/reads_merged.bam'
+        '{wildcards.library_name}/outputs/{wildcards.sample_name}/basecalling/reads_merged.bam'
     params:
         kit = lambda wildcards: get_exp_info(wildcards.library_name)['kit'],
         flowcell = lambda wildcards: get_exp_info(wildcards.library_name)['flowcell'],
@@ -133,8 +133,11 @@ rule basecalling_dorado:
     resources: gpus=1
     shell:
         """
+        mkdir -p {output}
         {input.basecaller_location} basecaller hac {input.pod5_path} > {output}
         """
+# /tmp/dorado-0.5.3-linux-x64/bin/dorado basecaller hac Szilvia_FH_transposons/L0728/reads_merged.pod5 > Szilvia_FH_transposons/outputs/L0728/reads_merged.bam
+# TODO basecalling od gpu 
 
 # rule merge_fastq_files:
 #     input:

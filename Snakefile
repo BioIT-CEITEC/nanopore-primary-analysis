@@ -27,7 +27,7 @@ include: "rules/rules.smk"
 
 rule all:
     input:
-        expand("outputs/{library_name}/{sample_name}/basecalling/sequencing_summary.txt", library_name = library_name, sample_name = sample_names)
+        expand("{library_name}/outputs/{sample_name}/basecalling/reads_merged.bam", library_name = library_name, sample_name = sample_names)
         #expand("{folder}/conversion_ok.txt", folder = config["run_dir"])
         #expand("{library_name}/sv_calling/variants.vcf", library_name = library)
         #expand("outputs/alignment/{library_name}/minimap2/reads-align.genome.sorted.bam", library_name = config["run_dir"])
