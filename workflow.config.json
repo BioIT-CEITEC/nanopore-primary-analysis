@@ -16,8 +16,9 @@
         "qc_reports/all_samples/nanopore_res_multiqc.html"
       ],
       "run_parameters": {
-        "gpu": 1,
-        "memory": 128
+        "cpu": 30,
+        "memory": 128,
+        "gpu": True
       }
     },
     "general_params": [
