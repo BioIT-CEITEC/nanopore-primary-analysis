@@ -17,7 +17,8 @@
       ],
       "run_parameters": {
         "cpu": 30,
-        "memory": 128
+        "memory": 128,
+        "gpu": true
       }
     },
     "general_params": [
