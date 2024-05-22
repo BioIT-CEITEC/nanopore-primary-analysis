@@ -25,7 +25,7 @@
     "entity_name",
     "sample_name"
     ],
-    "gui_params" : {
+"gui_params" : {
       "primary": {
         "lib_ROI": {
           "label": "Regions of interest",
