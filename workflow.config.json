@@ -5,11 +5,11 @@
       "label":"Basecalling, alignment",
       "type":"primary_analysis",
       "inputs":[
-        "nanopore_run_report.json",
-        "raw_*5_files"
+        "outputs/{sample_name}/nanopore_run_report.json",
+        "outputs/{sample_name}/reads.merged.pod5"
       ],
       "outputs":[
-        "sequencing_data/{sample}*.bam"
+        "outputs/{sample_name}/reads_merged.bam"
       ],
       "report_index": "qc_reports/all_samples/nanopore_res_multiqc.html",
       "reports":[

@@ -42,6 +42,38 @@ rule supafixed_indexing:
     shell:
         "samtools index {output.bam}"
 
+# TODO quality control, we need to convert to fastq files 
+rule convert_to_fastq:
+    input:
+        '{library_name}/outputs/{sample_name}/reads_merged.bam'
+    output:
+        sorted_bam = '{library_name}/outputs/{sample_name}/reads_merged_sorted.bam',   
+        fastq = '{library_name}/outputs/{sample_name}/reads_merged.fastq'
+    conda:
+        "../envs/alignment.yaml" 
+    shell:
+        """
+        samtools sort -n {input} -o {output.sorted_bam}
+        samtools fastq -T "*" {output.sorted_bam} > {output.fastq}
+        """
+
+# TODO quality control after alignment
+rule alignment_multiqc:
+    input: bam = '{library_name}/outputs/{sample_name}/reads_merged.bam',
+    output: html= "qc_reports/alignment_multiqc/multiqc.html"
+    conda:
+        "../envs/alignment_multiqc.yaml"
+    shell:
+        """
+        multiqc -f -n {output.html}
+        """
+
+rule sequencing_summary:
+    shell:
+        """
+        {input.basecaller_location} summary <bam> > summary.tsv
+        """"
+
 # TODO quality control after alignment
 # rule alignment_multiqc:
 #     input: bam = 'outputs/{wildcards.library_name}/{wildcards.sample_name}/basecalling/reads_merged.bam',
