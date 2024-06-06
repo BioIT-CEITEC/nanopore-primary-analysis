@@ -59,19 +59,21 @@ rule convert_to_fastq:
 
 # TODO quality control after alignment
 rule alignment_multiqc:
-    input: bam = '{library_name}/outputs/{sample_name}/reads_merged.bam',
+    input: '{library_name}/outputs/{sample_name}/reads_merged.fastq'
     output: html= "qc_reports/alignment_multiqc/multiqc.html"
     conda:
         "../envs/alignment_multiqc.yaml"
     shell:
         """
-        multiqc -f -n {output.html}
+        multiqc -f -n {output.html} {input}
         """
 
 rule sequencing_summary:
+    input: '{library_name}/outputs/{sample_name}/reads_merged.bam'
+    output: '{library_name}/outputs/{sample_name}/summary.tsv'
     shell:
         """
-        {input.basecaller_location} summary <bam> > summary.tsv
+        {input.basecaller_location} summary {input} > {output}
         """"
 
 # TODO quality control after alignment
