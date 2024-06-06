@@ -5,15 +5,15 @@
       "label":"Basecalling, alignment",
       "type":"primary_analysis",
       "inputs":[
-        "outputs/{sample_name}/nanopore_run_report.json",
-        "outputs/{sample_name}/reads.merged.pod5"
+        "{library_name}/outputs/{sample_name}/nanopore_run_report.json",
+        "{library_name}/outputs/{sample_name}/reads.merged.pod5"
       ],
       "outputs":[
-        "outputs/{sample_name}/reads_merged.bam"
+        "{library_name}/outputs/{sample_name}/reads_merged.bam"
       ],
-      "report_index": "qc_reports/all_samples/nanopore_res_multiqc.html",
+      "report_index": "{library_name}/qc_reports/all_samples/nanopore_res_multiqc.html",
       "reports":[
-        "qc_reports/all_samples/nanopore_res_multiqc.html"
+        "{library_name}/qc_reports/all_samples/nanopore_res_multiqc.html"
       ],
       "run_parameters": {
         "cpu": 30,
