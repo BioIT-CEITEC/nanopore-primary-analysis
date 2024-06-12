@@ -21,5 +21,7 @@ include: "rules/rules.smk"
 
 rule all:
     input:
-        expand("{library_name}/outputs/{sample_name}/reads_merged.bam", library_name = library_name, sample_name = sample_names),
-        "qc_reports/alignment_multiqc/multiqc.html"
+        expand('{library_name}/aligned/{sample_name}/{sample_name}.bam', library_name = library_name, sample_name = sample_names),
+        "qc_reports/all_samples/multiqc.html"
+
+        
