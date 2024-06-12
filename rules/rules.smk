@@ -3,13 +3,13 @@ import glob
 import os
 
 rule download_dorado_tar:
-    output: '/tmp/dorado-0.5.3-linux-x64.tar.gz'
+    output: expand('{GLOBAL_TMPD_PATH}/dorado-0.5.3-linux-x64.tar.gz', GLOBAL_TMPD_PATH = GLOBAL_TMPD_PATH)
     shell:
         f"""
         wget -P {GLOBAL_TMPD_PATH} https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.5.3-linux-x64.tar.gz
         """
 rule extract_dorado:
-    input:'dorado-0.5.3-linux-x64.tar.gz'
+    input: expand('{GLOBAL_TMPD_PATH}/dorado-0.5.3-linux-x64.tar.gz', GLOBAL_TMPD_PATH = GLOBAL_TMPD_PATH)
     output: basecaller_location
     shell:
         f"""
@@ -19,24 +19,25 @@ rule extract_dorado:
         
 rule supafixed_basecalling_dorado:
     input: 
-        pod5_path = "{library_name}/raw_reads/{sample_name}/{sample_name}.pod5",
+        pod5_path = expand("raw_reads/{sample_name}/{sample_name}.pod5", sample_name = sample_names),
         basecaller_location = basecaller_location,
     output:
-        '{library_name}/aligned/{sample_name}/{sample_name}.bam'
+        'aligned/{sample_name}/{sample_name}.bam'
     params:
         reference_path = reference_path
     threads: workflow.cores * 0.75
     resources: gpus=1
     shell:
         """
+        mkdir -p aligned/{sample_name}
         {input.basecaller_location} basecaller hac {input.pod5_path} --reference {params.reference_path} > {output}
-        """"
+        """
 
 rule supafixed_indexing:
     input:
-        '{library_name}/aligned/{sample_name}/{sample_name}.bam'
+        'aligned/{sample_name}/{sample_name}.bam'
     output:
-        '{library_name}/aligned/{sample_name}/{sample_name}.bam.bai'
+        'aligned/{sample_name}/{sample_name}.bam.bai'
     conda:
         "../envs/alignment.yaml" #TODO make yaml just for indexing (samtools only)
     shell:
@@ -45,10 +46,10 @@ rule supafixed_indexing:
 # TODO quality control, we need to convert to fastq files 
 rule convert_to_fastq:
     input:
-        '{library_name}/aligned/{sample_name}/{sample_name}.bam'
+        'aligned/{sample_name}/{sample_name}.bam'
     output:
-        sorted_bam = '{library_name}/aligned/{sample_name}/{sample_name}_sorted.bam',   
-        fastq = '{library_name}/raw_reads/{sample_name}/{sample_name}.fastq'
+        sorted_bam = 'aligned/{sample_name}/{sample_name}_sorted.bam',   
+        fastq = 'raw_reads/{sample_name}/{sample_name}.fastq'
     conda:
         "../envs/alignment.yaml" 
     shell:
@@ -59,7 +60,7 @@ rule convert_to_fastq:
 
 # TODO quality control after alignment
 rule alignment_multiqc:
-    input: '{library_name}/raw_reads/{sample_name}/{sample_name}.fastq'
+    input: expand('raw_reads/{sample_name}/{sample_name}.fastq', sample_name = sample_names)
     output: html= "qc_reports/all_samples/multiqc.html"
     conda:
         "../envs/alignment_multiqc.yaml"
@@ -69,9 +70,9 @@ rule alignment_multiqc:
         """
 
 rule sequencing_summary:
-    input: '{library_name}/aligned/{sample_name}/{sample_name}.bam'
-    output: '{library_name}/summary/{sample_name}/{sample_name}_summary.tsv'
+    input: 'aligned/{sample_name}/{sample_name}.bam'
+    output: 'summary/{sample_name}/{sample_name}_summary.tsv'
     shell:
         """
         {input.basecaller_location} summary {input} > {output}
-        """"
+        """
