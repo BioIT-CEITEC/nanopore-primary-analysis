@@ -75,10 +75,3 @@ rule sequencing_summary:
         """
         {input.basecaller_location} summary {input} > {output}
         """"
-
-# TODO quality control after alignment
-# rule alignment_multiqc:
-#     input: bam = 'outputs/{wildcards.library_name}/{wildcards.sample_name}/basecalling/reads_merged.bam',
-#     output: html= "outputs/qc_reports/alignment_multiqc/multiqc.html"
-#     conda:
-#         "../envs/alignment_multiqc.yaml"
