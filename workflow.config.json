@@ -31,15 +31,6 @@
           "label": "Genomic Reference",
           "type": "enum",
           "default": ##INCLUDE:reference_info/default_reference.json##,
-          "conditions": {
-            "relevance": {
-              "operand": "equal",
-              "negation": false,
-              "values": {
-                "lib_ROI": "wgs"
-              }
-            }
-          },
           "list": ##INCLUDE:reference_info/reference2.json##
         }
       }
