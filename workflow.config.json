@@ -5,8 +5,8 @@
       "label":"Basecalling, alignment",
       "type":"primary_analysis",
       "inputs":[
-        "outputs/{sample}/nanopore_run_report.json",
-        "outputs/{sample}/reads.merged.pod5"
+        "raw_reads/{sample}/{sample}.pod5",
+        "run_report/{sample}/{sample}_report.json"
       ],
       "outputs":[
         "outputs/{sample}/reads_merged.bam"
