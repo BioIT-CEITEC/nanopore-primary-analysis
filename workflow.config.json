@@ -26,13 +26,7 @@
     "sample_name"
     ],
 "gui_params" : {
-      "primary": {
-        "lib_ROI": {
-          "label": "Regions of interest",
-          "type": "enum",
-          "default": "wgs",
-          "list": ##INCLUDE:reference_info/lib_ROI.json##
-        },  
+      "primary": {  
         "reference": {
           "label": "Genomic Reference",
           "type": "enum",
