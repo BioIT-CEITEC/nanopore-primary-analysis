@@ -29,7 +29,7 @@ reference_path = os.path.join(GLOBAL_REF_PATH,config["organism"], config["refere
 sample_hashes = list(config["samples"].keys())
 basecaller_location = os.path.join(GLOBAL_TMPD_PATH, "dorado-0.5.3-linux-x64/bin/dorado")
 
-hash_to_path = {}
+#hash_to_path = {}
 
 # sample_names - from BR - not really sure how that works
 # sample_tab = BR.load_sample()
