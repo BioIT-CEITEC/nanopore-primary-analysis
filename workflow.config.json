@@ -16,7 +16,7 @@
         "qc_reports/all_samples/multiqc.html"
       ],
       "run_parameters": {
-        "cpu": 30,
+        "cpu": 4,
         "memory": 128,
         "gpu": true
       }

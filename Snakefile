@@ -1,4 +1,6 @@
 from pathlib import Path
+import pandas as pd
+
 configfile: "config.json"
 GLOBAL_REF_PATH = config["globalResources"] 
 GLOBAL_TMPD_PATH = config["globalTmpdPath"]
@@ -21,24 +23,33 @@ config["organism"] = config["species_name"].split(" (")[0].lower().replace(" ","
 if len(config["species_name"].split(" (")) > 1:
     config["species"] = config["species_name"].split(" (")[1].replace(")","")
 
-##### Config processing #####
 # Folders
 #
 reference_path = os.path.join(GLOBAL_REF_PATH,config["organism"], config["reference"], "seq", config["reference"] + ".fa")
 sample_hashes = list(config["samples"].keys())
-
 basecaller_location = os.path.join(GLOBAL_TMPD_PATH, "dorado-0.5.3-linux-x64/bin/dorado")
+
+hash_to_path = {}
+
+# sample_names - from BR - not really sure how that works
+# sample_tab = BR.load_sample()
+
+# wildcard_constraints:
+#     sample_name = "|".join(sample_tab.sample_name)
 
 sample_names = []
 for sample in sample_hashes:
     sample_name = config["samples"][sample]["sample_name"]
     sample_names.append(sample_name)
+    #hash_to_path[sample]=os.path.join("raw_reads", sample_name, sample_name + ".pod5") #TODO add {library_name} when copy to copy_raw_data
 
 ##### Target rules #####
 rule all:
     input:
         expand('aligned/{sample_name}/{sample_name}.bam', sample_name = sample_names),
-        "qc_reports/all_samples/multiqc.html"
+        #"sequencing_run_info/samplesNumberReads.json"
+        #expand('aligned/{sample_name}/{sample_name}.bam', sample_name = "test1"),
+        #"qc_reports/all_samples/multiqc.html"
 
 ##### Modules #####   
 include: "rules/rules.smk"
