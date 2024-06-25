@@ -1,6 +1,0 @@
-name: svim_env
-channels:
-  - bioconda
-  - conda-forge
-dependencies:
-  - svim=2.0.0

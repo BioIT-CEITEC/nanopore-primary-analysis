@@ -47,9 +47,7 @@ for sample in sample_hashes:
 rule all:
     input:
         expand('aligned/{sample_name}/{sample_name}.bam', sample_name = sample_names),
-        #"sequencing_run_info/samplesNumberReads.json"
-        #expand('aligned/{sample_name}/{sample_name}.bam', sample_name = "test1"),
-        #"qc_reports/all_samples/multiqc.html"
+        "qc_reports/all_samples/multiqc_report.html"
 
 ##### Modules #####   
 include: "rules/rules.smk"

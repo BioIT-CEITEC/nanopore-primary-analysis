@@ -41,53 +41,60 @@ rule supafixed_basecalling_dorado:
         fi
         """
 
-# rule createSamplesNumberReads:
-#     input: pod5_merged = expand("raw_reads/{sample_name}/{sample_name}.pod5", sample_name = "test1")
-#     output: "sequencing_run_info/samplesNumberReads.json"
-#     params: hash_to_path = hash_to_path
-#     conda: "../envs/pod5_merge.yaml"
-#     script: "createSamplesNumberReads.py"
+# rule supafixed_indexing:
+#     input:
+#         'aligned/{sample_name}/{sample_name}.bam'
+#     output:
+#         'aligned/{sample_name}/{sample_name}.bam.bai'
+#     conda:
+#         "../envs/alignment.yaml" #TODO make yaml just for indexing (samtools only)
+#     shell:
+#         "samtools index {output.bam}"
 
-rule supafixed_indexing:
+# # TODO quality control, we need to convert to fastq files 
+# rule convert_to_fastq:
+#     input:
+#         'aligned/{sample_name}/{sample_name}.bam'
+#     output:
+#         sorted_bam = 'aligned/{sample_name}/{sample_name}_sorted.bam',   
+#         fastq = 'raw_reads/{sample_name}/{sample_name}.fastq'
+#     conda:
+#         "../envs/alignment.yaml" 
+#     shell:
+#         """
+#         samtools sort -n {input} -o {output.sorted_bam}
+#         samtools fastq -T "*" {output.sorted_bam} > {output.fastq}
+#         """
+
+rule create_stats_from_bam:
     input:
         'aligned/{sample_name}/{sample_name}.bam'
     output:
-        'aligned/{sample_name}/{sample_name}.bam.bai'
-    conda:
-        "../envs/alignment.yaml" #TODO make yaml just for indexing (samtools only)
-    shell:
-        "samtools index {output.bam}"
-
-# TODO quality control, we need to convert to fastq files 
-rule convert_to_fastq:
-    input:
-        'aligned/{sample_name}/{sample_name}.bam'
-    output:
-        sorted_bam = 'aligned/{sample_name}/{sample_name}_sorted.bam',   
-        fastq = 'raw_reads/{sample_name}/{sample_name}.fastq'
+        stats='aligned/{sample_name}/{sample_name}_stats.txt'
     conda:
         "../envs/alignment.yaml" 
     shell:
         """
-        samtools sort -n {input} -o {output.sorted_bam}
-        samtools fastq -T "*" {output.sorted_bam} > {output.fastq}
+        samtools stats {input} > {output.stats}
         """
 
 # TODO quality control after alignment
 rule alignment_multiqc:
-    input: expand('raw_reads/{sample_name}/{sample_name}.fastq', sample_name = sample_names)
-    output: html= "qc_reports/all_samples/multiqc.html"
+    input: expand('aligned/{sample_name}/{sample_name}_stats.txt', sample_name = sample_names)
+    output: html= "qc_reports/all_samples/multiqc_report.html"
+    params: outdir = "qc_reports/all_samples"
     conda:
         "../envs/alignment_multiqc.yaml"
     shell:
         """
-        multiqc -f -n {output.html} {input}
+        mkdir -p {params.outdir}
+        multiqc --force -o {params.outdir} {input}
         """
 
-rule sequencing_summary:
-    input: 'aligned/{sample_name}/{sample_name}.bam'
-    output: 'summary/{sample_name}/{sample_name}_summary.tsv'
-    shell:
-        """
-        {input.basecaller_location} summary {input} > {output}
-        """
+# rule sequencing_summary:
+#     input: 'aligned/{sample_name}/{sample_name}.bam'
+#     output: 'summary/{sample_name}/{sample_name}_summary.tsv'
+#     shell:
+#         """
+#         {input.basecaller_location} summary {input} > {output}
+#         """

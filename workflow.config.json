@@ -1,39 +1,39 @@
 {
-    "workflow_description": {
-      "name":"nanopore_primary_analysis",
-      "version": 1.0,
-      "label":"Basecalling, alignment",
-      "type":"primary_analysis",
-      "inputs":[
-        "raw_reads/{sample}/{sample}.pod5",
-        "run_report/{sample}/{sample}_report.json"
-      ],
-      "outputs":[
-        "aligned/{sample}/{sample}.bam"
-      ],
-      "report_index": "qc_reports/all_samples/multiqc.html",
-      "reports":[
-        "qc_reports/all_samples/multiqc.html"
-      ],
-      "run_parameters": {
-        "cpu": 4,
-        "memory": 128,
-        "gpu": true
-      }
-    },
-    "general_params": [
-    "entity_name",
-    "sample_name"
+  "workflow_description": {
+    "name":"nanopore_primary_analysis",
+    "version": 1.0,
+    "label":"Basecalling, alignment",
+    "type":"primary_analysis",
+    "inputs":[
+      "raw_reads/{sample}/{sample}.pod5",
+      "run_report/{sample}/{sample}_report.json"
     ],
+    "outputs":[
+      "aligned/{sample}/{sample}.bam"
+    ],
+    "report_index": "qc_reports/all_samples/multiqc_report.html",
+    "reports":[
+      "qc_reports/all_samples/multiqc_report.html"
+    ],
+    "run_parameters": {
+      "cpu": 4,
+      "memory": 128,
+      "gpu": true
+    }
+  },
+  "general_params": [
+  "entity_name",
+  "sample_name"
+  ],
 "gui_params" : {
-      "primary": {  
-        "reference": {
-          "label": "Genomic Reference",
-          "type": "enum",
-          "default": ##INCLUDE:reference_info/default_reference.json##,
-          "list": ##INCLUDE:reference_info/reference2.json##
-        }
+    "primary": {  
+      "reference": {
+        "label": "Genomic Reference",
+        "type": "enum",
+        "default": ##INCLUDE:reference_info/default_reference.json##,
+        "list": ##INCLUDE:reference_info/reference2.json##
       }
     }
   }
-  
+}
+
