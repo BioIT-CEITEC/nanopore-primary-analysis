@@ -33,12 +33,16 @@ sample_names = []
 for sample in sample_hashes:
     sample_name = config["samples"][sample]["sample_name"]
     sample_names.append(sample_name)
+    #hash_to_path[sample]=os.path.join("raw_reads", sample_name, sample_name + ".pod5") #TODO add {library_name} when copy to copy_raw_data
 
 ##### Target rules #####
 rule all:
     input:
         expand('aligned/{sample_name}/{sample_name}.bam', sample_name = sample_names),
-        "qc_reports/all_samples/multiqc_report.html"
+        expand('aligned/{sample_name}/{sample_name}_sorted.bam', sample_name = sample_names),
+        expand('summary/{sample_name}/{sample_name}_summary.tsv', sample_name = sample_names),
+        "qc_reports/all_samples/multiqc_report.html",
+        expand('summary/{sample_name}/{sample_name}_summary.tsv', sample_name = sample_names)
 
 ##### Modules #####   
 include: "rules/rules.smk"

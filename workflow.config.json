@@ -9,7 +9,8 @@
       "run_report/{sample}/{sample}_report.json"
     ],
     "outputs":[
-      "aligned/{sample}/{sample}.bam"
+      "aligned/{sample}/{sample}.bam",
+      "aligned/{sample_name}/{sample_name}_sorted.bam"
     ],
     "report_index": "qc_reports/all_samples/multiqc_report.html",
     "reports":[
@@ -32,19 +33,7 @@
         "type": "enum",
         "default": ##INCLUDE:reference_info/default_reference.json##,
         "list": ##INCLUDE:reference_info/reference2.json##
-      },
-    "dorado_model": {
-        "label": "Selected model",
-        "type": "enum",
-        "info": "Model to use for basecalling",
-        "default": "hac",
-        "list": {
-          "fast": "fast - quickest model",
-          "hac": "hac - high accurate model",
-          "sup": "sup - super accurate model"
-        }
       }
-
     }
   }
 }

@@ -24,33 +24,34 @@ rule supafixed_basecalling_dorado:
     output:
         'aligned/{sample_name}/{sample_name}.bam'
     params:
-        dorado_model=config["dorado_model"],
         non_empty_input=lambda wildcards, input: int(os.path.getsize(input.pod5_path) != 0), # converting to 0/1 to bash if
         reference_path = reference_path,
         sample_names = sample_names,
         dirname = 'aligned/{sample_name}'
     threads: workflow.cores * 0.75
     resources: gpus=1
-    #script: "./basecalling.py"
     shell:
         """
         mkdir -p {params.dirname}
         if [ {params.non_empty_input} -eq 0 ]; then
             touch {output}
         else
-            {input.basecaller_location} basecaller {params.dorado_model} {input.pod5_path} --reference {params.reference_path} > {output}
+            {input.basecaller_location} basecaller hac {input.pod5_path} --reference {params.reference_path} > {output}
         fi
         """
 
-# rule supafixed_indexing:
-#     input:
-#         'aligned/{sample_name}/{sample_name}.bam'
-#     output:
-#         'aligned/{sample_name}/{sample_name}.bam.bai'
-#     conda:
-#         "../envs/alignment.yaml" #TODO make yaml just for indexing (samtools only)
-#     shell:
-#         "samtools index {output.bam}"
+rule supafixed_sorting_indexing:
+    input:
+        'aligned/{sample_name}/{sample_name}.bam'
+    output:
+        sorted='aligned/{sample_name}/{sample_name}_sorted.bam'
+    conda:
+        "../envs/alignment.yaml" #TODO make yaml just for indexing (samtools only)
+    shell:
+        """
+        samtools sort {input} -o {output.sorted}
+        samtools index {output.sorted}
+        """
 
 # # TODO quality control, we need to convert to fastq files 
 # rule convert_to_fastq:
@@ -92,10 +93,12 @@ rule alignment_multiqc:
         multiqc --force -o {params.outdir} {input}
         """
 
-# rule sequencing_summary:
-#     input: 'aligned/{sample_name}/{sample_name}.bam'
-#     output: 'summary/{sample_name}/{sample_name}_summary.tsv'
-#     shell:
-#         """
-#         {input.basecaller_location} summary {input} > {output}
-#         """
+rule sequencing_summary:
+    input: 
+        basecaller_location = basecaller_location,
+        bam = 'aligned/{sample_name}/{sample_name}.bam'
+    output: 'summary/{sample_name}/{sample_name}_summary.tsv'
+    shell:
+        """
+        {input.basecaller_location} summary {input.bam} > {output}
+        """
