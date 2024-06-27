@@ -34,9 +34,9 @@
         "list": ##INCLUDE:reference_info/reference2.json##
       },
     "dorado_model": {
-        "label": "Model to use for basecalling",
+        "label": "Selected model",
         "type": "enum",
-        "info": "Kit used for library preparation",
+        "info": "Model to use for basecalling",
         "default": "hac",
         "list": {
           "fast": "fast - quickest model",
