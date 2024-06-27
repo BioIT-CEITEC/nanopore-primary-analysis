@@ -24,6 +24,7 @@ rule supafixed_basecalling_dorado:
     output:
         'aligned/{sample_name}/{sample_name}.bam'
     params:
+        dorado_model=config["dorado_model"],
         non_empty_input=lambda wildcards, input: int(os.path.getsize(input.pod5_path) != 0), # converting to 0/1 to bash if
         reference_path = reference_path,
         sample_names = sample_names,
@@ -37,7 +38,7 @@ rule supafixed_basecalling_dorado:
         if [ {params.non_empty_input} -eq 0 ]; then
             touch {output}
         else
-            {input.basecaller_location} basecaller hac {input.pod5_path} --reference {params.reference_path} > {output}
+            {input.basecaller_location} basecaller {params.dorado_model} {input.pod5_path} --reference {params.reference_path} > {output}
         fi
         """
 

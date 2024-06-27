@@ -29,19 +29,10 @@ reference_path = os.path.join(GLOBAL_REF_PATH,config["organism"], config["refere
 sample_hashes = list(config["samples"].keys())
 basecaller_location = os.path.join(GLOBAL_TMPD_PATH, "dorado-0.5.3-linux-x64/bin/dorado")
 
-#hash_to_path = {}
-
-# sample_names - from BR - not really sure how that works
-# sample_tab = BR.load_sample()
-
-# wildcard_constraints:
-#     sample_name = "|".join(sample_tab.sample_name)
-
 sample_names = []
 for sample in sample_hashes:
     sample_name = config["samples"][sample]["sample_name"]
     sample_names.append(sample_name)
-    #hash_to_path[sample]=os.path.join("raw_reads", sample_name, sample_name + ".pod5") #TODO add {library_name} when copy to copy_raw_data
 
 ##### Target rules #####
 rule all:
