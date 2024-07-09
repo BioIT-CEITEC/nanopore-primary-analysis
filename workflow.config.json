@@ -33,7 +33,19 @@
         "type": "enum",
         "default": ##INCLUDE:reference_info/default_reference.json##,
         "list": ##INCLUDE:reference_info/reference2.json##
+      },
+    "dorado_model": {
+        "label": "Model to use for basecalling",
+        "type": "enum",
+        "info": "Kit used for library preparation",
+        "default": "hac",
+        "list": {
+          "fast": "fast - quickest model",
+          "hac": "hac - high accurate model",
+          "sup": "sup - super accurate model"
+        }
       }
+
     }
   }
 }
