@@ -24,10 +24,12 @@ rule supafixed_basecalling_dorado:
     output:
         'aligned/{sample_name}/{sample_name}.bam'
     params:
+        dorado_model=config["dorado_model"],
         non_empty_input=lambda wildcards, input: int(os.path.getsize(input.pod5_path) != 0), # converting to 0/1 to bash if
         reference_path = reference_path,
         sample_names = sample_names,
-        dirname = 'aligned/{sample_name}'
+        dirname = 'aligned/{sample_name}',
+        methylation = int(config["methylation_changes"] == "true")
     threads: workflow.cores * 0.75
     resources: gpus=1
     shell:
@@ -35,8 +37,10 @@ rule supafixed_basecalling_dorado:
         mkdir -p {params.dirname}
         if [ {params.non_empty_input} -eq 0 ]; then
             touch {output}
+        elif [ {params.methylation} -eq 0 ]; then
+            {input.basecaller_location} basecaller {params.dorado_model} {input.pod5_path} --reference {params.reference_path} > {output}
         else
-            {input.basecaller_location} basecaller hac {input.pod5_path} --reference {params.reference_path} > {output}
+            {input.basecaller_location} basecaller {params.dorado_model},5mCG_5hmCG {input.pod5_path} --reference {params.reference_path} > {output}
         fi
         """
 

@@ -34,18 +34,23 @@
         "default": ##INCLUDE:reference_info/default_reference.json##,
         "list": ##INCLUDE:reference_info/reference2.json##
       },
-    "dorado_model": {
-        "label": "Model to use for basecalling",
+      "dorado_model": {
+        "label": "Selected model",
         "type": "enum",
-        "info": "Kit used for library preparation",
+        "info": "Model to use for basecalling",
         "default": "hac",
         "list": {
           "fast": "fast - quickest model",
           "hac": "hac - high accurate model",
           "sup": "sup - super accurate model"
         }
+      },
+      "methylation_changes": {
+        "label": "Detect methylation changes",
+        "type": "bool",
+        "info": "Detect methylation changes with dorado",
+        "default": true
       }
-
     }
   }
 }
