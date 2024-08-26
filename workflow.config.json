@@ -12,10 +12,6 @@
       "aligned/{sample}/{sample}.bam",
       "aligned/{sample}/{sample}_sorted.bam"
     ],
-    "report_index": "qc_reports/all_samples/multiqc_report.html",
-    "reports":[
-      "qc_reports/all_samples/multiqc_report.html"
-    ],
     "run_parameters": {
       "cpu": 4,
       "memory": 64,
