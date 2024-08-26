@@ -84,18 +84,18 @@ rule create_stats_from_bam:
         samtools stats {input} > {output.stats}
         """
 
-# TODO quality control after alignment
-rule alignment_multiqc:
-    input: expand('aligned/{sample_name}/{sample_name}_stats.txt', sample_name = sample_names)
-    output: html= "qc_reports/all_samples/multiqc_report.html"
-    params: outdir = "qc_reports/all_samples"
-    conda:
-        "../envs/alignment_multiqc.yaml"
-    shell:
-        """
-        mkdir -p {params.outdir}
-        multiqc --force -o {params.outdir} {input}
-        """
+# # TODO quality control after alignment
+# rule alignment_multiqc:
+#     input: expand('aligned/{sample_name}/{sample_name}_stats.txt', sample_name = sample_names)
+#     output: html= "qc_reports/all_samples/multiqc_report.html"
+#     params: outdir = "qc_reports/all_samples"
+#     conda:
+#         "../envs/alignment_multiqc.yaml"
+#     shell:
+#         """
+#         mkdir -p {params.outdir}
+#         multiqc --force -o {params.outdir} {input}
+#         """
 
 rule sequencing_summary:
     input: 
