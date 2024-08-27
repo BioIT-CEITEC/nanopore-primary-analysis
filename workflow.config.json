@@ -14,7 +14,7 @@
     ],
     "run_parameters": {
       "cpu": 4,
-      "memory": 64,
+      "memory": 128,
       "gpu": true
     }
   },
