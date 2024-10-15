@@ -41,11 +41,17 @@
           "sup": "sup - super accurate model"
         }
       },
-      "methylation_changes": {
-        "label": "Detect methylation changes",
+      "5mC_methylation": {
+        "label": "Detect 5mC methylation changes",
         "type": "bool",
-        "info": "Detect methylation changes with dorado",
-        "default": true
+        "info": "Detect 5mC methylation changes with dorado",
+        "default": false
+      }, 
+      "mmA_ethylation": {
+        "label": "Detect 6mA methylation changes",
+        "type": "bool",
+        "info": "Detect 6mA methylation changes with dorado",
+        "default": false
       }
     }
   }
