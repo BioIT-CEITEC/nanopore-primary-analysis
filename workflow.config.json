@@ -48,7 +48,7 @@
         "info": "Detect 5mC methylation changes with dorado",
         "default": false
       }, 
-      "mmA_ethylation": {
+      "6mA_methylation": {
         "label": "Detect 6mA methylation changes",
         "type": "bool",
         "info": "Detect 6mA methylation changes with dorado",
