@@ -10,11 +10,12 @@
     ],
     "outputs":[
       "aligned/{sample}/{sample}.bam",
-      "aligned/{sample}/{sample}_sorted.bam"
+      "aligned/{sample}/{sample}_sorted.bam",
+      "summary/{sample}/{sample}_summary.tsv"
     ],
     "run_parameters": {
       "cpu": 4,
-      "memory": 64,
+      "memory": 128,
       "gpu": true
     }
   },
