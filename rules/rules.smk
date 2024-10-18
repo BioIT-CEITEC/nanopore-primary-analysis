@@ -47,7 +47,7 @@ rule supafixed_basecalling_dorado:
         mkdir -p {params.dirname}
         if [ {params.non_empty_input} -eq 0 ]; then
             touch {output}
-        elif 
+        else 
             {input.basecaller_location} basecaller {params.dorado_model}{params.methylation} {input.pod5_path} --reference {params.reference_path} > {output}
         fi
         """

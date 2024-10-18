@@ -11,6 +11,7 @@
     "outputs":[
       "aligned/{sample}/{sample}.bam",
       "aligned/{sample}/{sample}_sorted.bam",
+      "aligned/{sample}/{sample}_sorted.bam.bai",
       "summary/{sample}/{sample}_summary.tsv"
     ],
     "run_parameters": {
