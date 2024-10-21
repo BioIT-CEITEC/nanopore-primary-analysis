@@ -47,7 +47,7 @@ rule supafixed_basecalling_dorado:
         mkdir -p {params.dirname}
         if [ {params.non_empty_input} -eq 0 ]; then
             touch {output}
-        else 
+        else
             {input.basecaller_location} basecaller {params.dorado_model}{params.methylation} {input.pod5_path} --reference {params.reference_path} > {output}
         fi
         """
@@ -92,19 +92,6 @@ rule create_stats_from_bam:
         samtools stats {input} > {output.stats}
         """
 
-# # TODO quality control after alignment
-# rule alignment_multiqc:
-#     input: expand('aligned/{sample_name}/{sample_name}_stats.txt', sample_name = sample_names)
-#     output: html= "qc_reports/all_samples/multiqc_report.html"
-#     params: outdir = "qc_reports/all_samples"
-#     conda:
-#         "../envs/alignment_multiqc.yaml"
-#     shell:
-#         """
-#         mkdir -p {params.outdir}
-#         multiqc --force -o {params.outdir} {input}
-#         """
-
 rule sequencing_summary:
     input: 
         basecaller_location = basecaller_location,
@@ -113,4 +100,27 @@ rule sequencing_summary:
     shell:
         """
         {input.basecaller_location} summary {input.bam} > {output}
+        """
+
+rule sequencing_QC:
+    input: 
+        'summary/{sample_name}/{sample_name}_summary.tsv'
+    output: 'qc_reports/{sample_name}/{sample_name}_pycoQC.html'
+    conda:
+        "../envs/alignment.yaml" 
+    shell:
+        """
+        pycoQC -f {input} -o {output}
+        """
+    
+rule alignment_multiqc:
+    input: expand('qc_reports/{sample_name}/{sample_name}_pycoQC.html', sample_name = sample_names)
+    output: html= "qc_reports/all_samples/alignment_DNA_multiqc.html"
+    params: outdir = "qc_reports/all_samples"
+    conda:
+        "../envs/alignment_multiqc.yaml"
+    shell:
+        """
+        mkdir -p {params.outdir}
+        multiqc --force -o {params.outdir} {input}
         """

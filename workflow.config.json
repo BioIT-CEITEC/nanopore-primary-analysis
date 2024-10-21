@@ -12,7 +12,11 @@
       "aligned/{sample}/{sample}.bam",
       "aligned/{sample}/{sample}_sorted.bam",
       "aligned/{sample}/{sample}_sorted.bam.bai",
-      "summary/{sample}/{sample}_summary.tsv"
+      "summary/{sample}/*"
+    ],
+    "report_index": "qc_reports/all_samples/alignment_DNA_multiqc.html",
+    "reports":[
+       "qc_reports/*"
     ],
     "run_parameters": {
       "cpu": 4,
