@@ -40,7 +40,7 @@ rule all:
     input:
         expand('aligned/{sample_name}/{sample_name}.bam', sample_name = sample_names),
         expand('aligned/{sample_name}/{sample_name}_sorted.bam', sample_name = sample_names),
-        expand('summary/{sample_name}/{sample_name}_summary.tsv', sample_name = sample_names)
+        expand('summary/{sample_name}/{sample_name}_summary.tsv', sample_name = sample_names),
         # expand('aligned/{sample_name}/{sample_name}.bam', sample_name = "test23"),
         # expand('aligned/{sample_name}/{sample_name}_sorted.bam', sample_name = "test23"),
         # expand('summary/{sample_name}/{sample_name}_summary.tsv', sample_name = "test23"),
