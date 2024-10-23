@@ -4,3 +4,6 @@ channels:
 dependencies:
     - minimap2==2.24
     - samtools==1.17
+    - pip
+    - pip: 
+        - pycoQC
