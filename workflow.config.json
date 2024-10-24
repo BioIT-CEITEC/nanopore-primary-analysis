@@ -15,7 +15,7 @@
       "aligned/{sample}/{sample}_sorted.bam.bai",
       "summary/{sample}/*"
     ],
-    "report_index": "qc_reports/all_samples/alignment_DNA_multiqc.html",
+    "report_index": "qc_reports/all_samples/multiqc_report.html",
     "reports":[
        "qc_reports/*"
     ],

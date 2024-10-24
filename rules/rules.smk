@@ -105,17 +105,19 @@ rule sequencing_summary:
 rule sequencing_QC:
     input: 
         'summary/{sample_name}/{sample_name}_summary.tsv'
-    output: 'qc_reports/{sample_name}/{sample_name}_pycoQC.html'
+    output: 
+        html = 'qc_reports/{sample_name}/{sample_name}_pycoQC.html',
+        json = 'qc_reports/{sample_name}/{sample_name}_pycoQC.json'
     conda:
         "../envs/alignment.yaml" 
     shell:
         """
-        pycoQC -f {input} -o {output}
+        pycoQC -f {input} -o {output.html} --json_out {output.json}
         """
     
 rule alignment_multiqc:
-    input: expand('qc_reports/{sample_name}/{sample_name}_pycoQC.html', sample_name = sample_names)
-    output: html= "qc_reports/all_samples/alignment_DNA_multiqc.html"
+    input: expand('qc_reports/{sample_name}/{sample_name}_pycoQC.json', sample_name = sample_names)
+    output: html= "qc_reports/all_samples/multiqc_report.html"
     params: outdir = "qc_reports/all_samples"
     conda:
         "../envs/alignment_multiqc.yaml"
