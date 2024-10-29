@@ -43,6 +43,9 @@ for sample in filtered_hashes:
     sample_names.append(sample_name)
     #hash_to_path[sample]=os.path.join("raw_reads", sample_name, sample_name + ".pod5") #TODO add {library_name} when copy to copy_raw_data
 
+def input_methylation(wildcard):
+    if config["6mA_methylation"] or config["5mC_methylation"]:
+        return expand("methylation/{sample_name}/{sample_name}_modkit.tsv", sample_name = sample_names)
 
 ##### Target rules #####
 rule all:
@@ -50,11 +53,13 @@ rule all:
         expand('aligned/{sample_name}/{sample_name}.bam', sample_name = sample_names),
         expand('aligned/{sample_name}/{sample_name}_sorted.bam', sample_name = sample_names),
         expand('summary/{sample_name}/{sample_name}_summary.tsv', sample_name = sample_names),
+        #expand("methylation/{sample_name}/{sample_name}_modkit.tsv", sample_name = sample_names),
         # expand('aligned/{sample_name}/{sample_name}.bam', sample_name = "test23"),
         # expand('aligned/{sample_name}/{sample_name}_sorted.bam', sample_name = "test23"),
         # expand('summary/{sample_name}/{sample_name}_summary.tsv', sample_name = "test23"),
         # expand('summary/{sample_name}/{sample_name}_pycoQC.html', sample_name = "test23"),
-        "qc_reports/all_samples/multiqc_report.html"
+        "qc_reports/all_samples/multiqc_report.html",
+        input_methylation
         
 ##### Modules #####   
 include: "rules/rules.smk"

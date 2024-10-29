@@ -126,3 +126,19 @@ rule alignment_multiqc:
         mkdir -p {params.outdir}
         multiqc --force -o {params.outdir} {input}
         """
+
+# samtools view aligned/test22/test22_sorted.bam | awk '{for(i=12;i<=NF;i++) if($i ~ /^MM:Z:/ || $i ~ /^ML:B:C:/) print $1, $i}' > aligned/test22/methylation_output.txt
+rule create_modified_table:
+    input: bam = 'aligned/{sample_name}/{sample_name}_sorted.bam'
+    output: 
+        tsv = "methylation/{sample_name}/{sample_name}_modkit.tsv",
+        bed = "methylation/{sample_name}/{sample_name}_modkit.bed"
+    params: outdir = "methylation/{sample_name}"
+    conda:
+        "../envs/methylation.yaml"
+    shell:
+        """
+        mkdir -p {params.outdir}
+        modkit extract full {input.bam} {output.tsv}
+        modkit pileup {input.bam} {output.bed} --log-filepath {params.outdir}/pileup.log
+        """
