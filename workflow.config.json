@@ -49,9 +49,9 @@
         }
       },
       "5mC_methylation": {
-        "label": "Detect 5mC methylation changes",
+        "label": "Detect 5mC and 5hmC methylation changes",
         "type": "bool",
-        "info": "Detect 5mC methylation changes with dorado",
+        "info": "Detect 5mC and 5hmC methylation changes with dorado",
         "default": false
       }, 
       "6mA_methylation": {
