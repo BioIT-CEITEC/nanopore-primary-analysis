@@ -6,8 +6,7 @@
     "type":"primary_analysis",
     "inputs":[
       "raw_reads/{sample}/{sample}.pod5",
-      "run_report/{sample}/{sample}_report.json",
-      "sequencing_run_info/samplesNumberReads.json"
+      "run_report/{sample}/{sample}_report.json"
     ],
     "outputs":[
       "aligned/{sample}/{sample}.bam",

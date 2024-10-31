@@ -35,11 +35,9 @@ with open("sequencing_run_info/samplesNumberReads.json", 'r') as file:
     data = json.load(file)
 
 sample_names = []
-filtered_hashes = [key for key, value in data.items() if value > 100]
 
-for sample in filtered_hashes:
+for sample in sample_hashes_hashes:
     sample_name = config["samples"][sample]["sample_name"]
-
     sample_names.append(sample_name)
     #hash_to_path[sample]=os.path.join("raw_reads", sample_name, sample_name + ".pod5") #TODO add {library_name} when copy to copy_raw_data
 
