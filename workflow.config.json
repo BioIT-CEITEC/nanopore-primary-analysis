@@ -12,7 +12,8 @@
       "aligned/{sample}/{sample}.bam",
       "aligned/{sample}/{sample}_sorted.bam",
       "aligned/{sample}/{sample}_sorted.bam.bai",
-      "summary/{sample}/*"
+      "summary/{sample}/*",
+      "methylation/{sample}/*"
     ],
     "report_index": "qc_reports/all_samples/multiqc_report.html",
     "reports":[
