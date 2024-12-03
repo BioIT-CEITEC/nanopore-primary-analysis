@@ -31,11 +31,22 @@
   ],
 "gui_params" : {
     "primary": {  
-      "reference": {
-        "label": "Genomic Reference",
+      "organism": {
+        "label": "Organism",
         "type": "enum",
-        "default": ##INCLUDE:reference_info/default_reference.json##,
-        "list": ##INCLUDE:reference_info/reference2.json##
+        "dynamicEnumName": "organism"
+      },
+      "assembly": {
+        "label": "Assembly",
+        "type": "enum",
+        "dynamicEnumName": "assembly",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        }
       },
       "dorado_model": {
         "label": "Selected model",
