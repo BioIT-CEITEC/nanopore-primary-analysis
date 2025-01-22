@@ -5,7 +5,7 @@
     "label":"Basecalling, alignment, methylation",
     "type":"primary_analysis",
     "inputs":[
-      "raw_reads/{sample}/{sample}.pod5",
+      "raw_reads/{sample}/{sample}.pod5"
     ],
     "outputs":[
       "aligned/{sample}/{sample}.bam",
