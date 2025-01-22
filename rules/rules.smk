@@ -132,7 +132,7 @@ rule alignment_multiqc:
 rule create_modified_table:
     input: bam = 'aligned/{sample_name}/{sample_name}_sorted.bam'
     output: 
-        tsv = "methylation/{sample_name}/{sample_name}_modkit.tsv",
+    #    tsv = "methylation/{sample_name}/{sample_name}_modkit.tsv",
         bed = "methylation/{sample_name}/{sample_name}_modkit.bed"
     params: outdir = "methylation/{sample_name}"
     conda:
@@ -140,6 +140,6 @@ rule create_modified_table:
     shell:
         """
         mkdir -p {params.outdir}
-        modkit extract full {input.bam} {output.tsv}
         modkit pileup {input.bam} {output.bed} --log-filepath {params.outdir}/pileup.log
         """
+#modkit extract full {input.bam} {output.tsv}

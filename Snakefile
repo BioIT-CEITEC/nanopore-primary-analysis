@@ -39,7 +39,7 @@ for sample in sample_hashes:
 
 def input_methylation(wildcard):
     if config["6mA_methylation"] or config["5mC_methylation"]:
-        return expand("methylation/{sample_name}/{sample_name}_modkit.tsv", sample_name = sample_names)
+        return expand("methylation/{sample_name}/{sample_name}_modkit.bed", sample_name = sample_names)
 
 ##### Target rules #####
 rule all:
