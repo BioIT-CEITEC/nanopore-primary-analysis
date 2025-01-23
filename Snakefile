@@ -8,25 +8,13 @@ GLOBAL_TMPD_PATH = config["globalTmpdPath"]
 
 ##### BioRoot utilities - reference #####
 module BR:
-    snakefile: gitlab("bioroots/bioroots_utilities", path="bioroots_utilities.smk",branch="master")
+    snakefile: github("BioIT-CEITEC/bioroots_utilities", path="bioroots_utilities.smk",branch="master")
     config: config
 
 use rule * from BR as other_*
 config = BR.load_organism()
+sample_tab = BR.load_sample()
 
-# setting organism from reference
-#f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference2.json"),)
-#reference_dict = json.load(f)
-#f.close()
-
-config["species_name"] = [organism_name for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
-config["organism"] = config["species_name"].split(" (")[0].lower().replace(" ","_")
-if len(config["species_name"].split(" (")) > 1:
-    config["species"] = config["species_name"].split(" (")[1].replace(")","")
-
-# Folders
-#
-# reference_path = os.path.join(GLOBAL_REF_PATH,config["organism"], config["reference"], "seq", config["reference"] + ".fa")
 sample_hashes = list(config["samples"].keys())
 basecaller_location = os.path.join(GLOBAL_TMPD_PATH, "dorado-0.5.3-linux-x64/bin/dorado")
 
