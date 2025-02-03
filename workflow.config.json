@@ -8,11 +8,10 @@
       "raw_reads/{sample}/{sample}.pod5"
     ],
     "outputs":[
-      "aligned/{sample}/{sample}.bam",
-      "aligned/{sample}/{sample}_sorted.bam",
-      "aligned/{sample}/{sample}_sorted.bam.bai",
+      "aligned/{sample}/*",
       "summary/{sample}/*",
-      "methylation/{sample}/*"
+      "methylation/{sample}/*",
+      "qc_reports/*"
     ],
     "report_index": "qc_reports/all_samples/multiqc_report.html",
     "reports":[
