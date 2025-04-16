@@ -5,7 +5,7 @@
     "label":"Basecalling, alignment, methylation",
     "type":"primary_analysis",
     "inputs":[
-      "raw_reads/{sample}/*.pod5"
+      "raw_reads/{sample}/{sample}.pod5"
     ],
     "outputs":[
       "aligned/{sample}/*",
@@ -68,6 +68,12 @@
         "type": "bool",
         "info": "Detect 6mA methylation changes with dorado",
         "default": false
+      },
+      "splice_aware_alignment": {
+        "label": "Do splice-aware alignment",
+        "type": "bool",
+        "info": "Add option for minimap to do splice-aware alignment",
+        "default": true
       }
     }
   }

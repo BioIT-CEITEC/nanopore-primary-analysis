@@ -29,7 +29,7 @@ elif config["6mA_methylation"]:
 
 rule supafixed_basecalling_dorado:
     input: 
-        pod5_path = "raw_reads/{sample_name}/*.pod5",
+        pod5_path = "raw_reads/{sample_name}/{sample_name}.pod5",
         basecaller_location = basecaller_location,
     output:
         'aligned/{sample_name}/{sample_name}.bam'
