@@ -64,26 +64,12 @@ rule supafixed_sorting_indexing:
         """
         samtools sort {input} -o {output.sorted}
         samtools index {output.sorted}
+        rm {input} # remove unsorted bam to save space
         """
-
-# # TODO quality control, we need to convert to fastq files 
-# rule convert_to_fastq:
-#     input:
-#         'aligned/{sample_name}/{sample_name}.bam'
-#     output:
-#         sorted_bam = 'aligned/{sample_name}/{sample_name}_sorted.bam',   
-#         fastq = 'raw_reads/{sample_name}/{sample_name}.fastq'
-#     conda:
-#         "../envs/alignment.yaml" 
-#     shell:
-#         """
-#         samtools sort -n {input} -o {output.sorted_bam}
-#         samtools fastq -T "*" {output.sorted_bam} > {output.fastq}
-#         """
 
 rule create_stats_from_bam:
     input:
-        'aligned/{sample_name}/{sample_name}.bam'
+        'aligned/{sample_name}/{sample_name}_sorted.bam'
     output:
         stats='aligned/{sample_name}/{sample_name}_stats.txt'
     conda:
@@ -96,7 +82,7 @@ rule create_stats_from_bam:
 rule sequencing_summary:
     input: 
         basecaller_location = basecaller_location,
-        bam = 'aligned/{sample_name}/{sample_name}.bam'
+        bam = 'aligned/{sample_name}/{sample_name}_sorted.bam'
     output: 'summary/{sample_name}/{sample_name}_summary.tsv'
     shell:
         """
@@ -114,6 +100,37 @@ rule sequencing_QC:
     shell:
         """
         pycoQC -f {input} -o {output.html} --json_out {output.json}
+        """
+
+rule filter_primary_chromosomes:
+    input: 
+        bam = 'aligned/{sample_name}/{sample_name}_sorted.bam'
+    output: 
+        primary_bam = 'aligned/{sample_name}/{sample_name}_primary.bam',
+        primary_bam_index = 'aligned/{sample_name}/{sample_name}_primary.bam.bai'
+    conda:
+        "../envs/alignment.yaml" 
+    shell:
+        """
+        samtools view -b {input.bam} \
+        $(samtools idxstats {input.bam} | cut -f1 | grep -v '_' | grep -v 'chrUn' | grep -v 'alt' | grep -v 'fix' | grep -v 'random') \
+        > {output.primary_bam}
+        samtools index {output.primary_bam}
+        """
+
+rule sequencing_qc_qualimap:
+    input: 
+        bam = 'aligned/{sample_name}/{sample_name}_primary.bam'
+    output: 
+        html = 'qc_reports/{sample_name}/qualimap/{sample_name}_primary_qualimap.html',
+        json = 'qc_reports/{sample_name}/qualimap/{sample_name}_primary_qualimap.json'
+    conda:
+        "../envs/qualimap.yaml"
+    shell:
+        """
+        qualimap bamqc -bam {input.bam} -outdir qc_reports/{wildcards.sample_name}/qualimap -outformat HTML --java-mem-size=8G
+        mv qc_reports/{wildcards.sample_name}/qualimapReport.json {output.json}
+        mv qc_reports/{wildcards.sample_name}/qualimapReport.html {output.html}
         """
     
 rule alignment_multiqc:

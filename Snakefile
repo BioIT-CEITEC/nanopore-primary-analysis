@@ -28,6 +28,8 @@ for sample in sample_hashes:
 def input_methylation(wildcard):
     if config["6mA_methylation"] or config["5mC_methylation"]:
         return expand("methylation/{sample_name}/{sample_name}_modkit.bed", sample_name = sample_names)
+    else: 
+        return []
 
 ##### Target rules #####
 rule all:
@@ -41,6 +43,7 @@ rule all:
         # expand('summary/{sample_name}/{sample_name}_summary.tsv', sample_name = "test23"),
         # expand('summary/{sample_name}/{sample_name}_pycoQC.html', sample_name = "test23"),
         "qc_reports/all_samples/multiqc_report.html",
+        expand('qc_reports/{sample_name}/qualimap/{sample_name}_primary_qualimap.html',sample_name = sample_names),
         input_methylation
         
 ##### Modules #####   
