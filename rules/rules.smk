@@ -152,11 +152,12 @@ rule create_modified_table:
     #    tsv = "methylation/{sample_name}/{sample_name}_modkit.tsv",
         bed = "methylation/{sample_name}/{sample_name}_modkit.bed"
     params: outdir = "methylation/{sample_name}"
+    threads: workflow.cores * 0.75
     conda:
         "../envs/methylation.yaml"
     shell:
         """
         mkdir -p {params.outdir}
-        modkit pileup {input.bam} {output.bed} --log-filepath {params.outdir}/pileup.log --filter-threshold C:0.8 --filter-threshold A:0.9
+        modkit pileup {input.bam} {output.bed} --log-filepath {params.outdir}/pileup.log --filter-threshold C:0.8 --filter-threshold A:0.9 -t {threads}
         """
 #modkit extract full {input.bam} {output.tsv}
