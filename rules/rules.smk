@@ -157,6 +157,6 @@ rule create_modified_table:
     shell:
         """
         mkdir -p {params.outdir}
-        modkit pileup {input.bam} {output.bed} --log-filepath {params.outdir}/pileup.log --filter-threshold 0.6
+        modkit pileup {input.bam} {output.bed} --log-filepath {params.outdir}/pileup.log --filter-threshold C:0.8 --filter-threshold A:0.9
         """
 #modkit extract full {input.bam} {output.tsv}
